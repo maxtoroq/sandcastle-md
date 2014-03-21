@@ -13,7 +13,7 @@ Open your Sandcastle project and make sure the following settings are in place:
 * Help File
   - Set *Topic file naming method* to **Member name**
   - Set *Presentation Style* to **VS2010**
-  - Check *Include root namespace container* and set the title to something like **&lt;FooProject> Namespaces**
+  - Check *Include root namespace container* and set the title to something like **&lt;project name> Namespaces**
 * Help 1/Website
   - Set *Website SDK link type* to **Online links to MSDN help topics**
 * Plug-Ins
