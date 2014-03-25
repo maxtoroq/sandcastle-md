@@ -302,7 +302,11 @@
       <variable name="index" select="$local:links[@href=current()/@href]/@index"/>
 
       <if test="$index">
-         <value-of select="'[', normalize-space(), '][', $index, ']'" separator=""/>
+         <text>[</text>
+         <next-match/>
+         <text>][</text>
+         <value-of select="$index"/>
+         <text>]</text>
       </if>
    </template>
 
