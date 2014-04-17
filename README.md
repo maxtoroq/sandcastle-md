@@ -1,4 +1,4 @@
-﻿Convert your Sandcastle-generated HTML website to GitHub friendly Markdown
+﻿Convert your Sandcastle-generated HTML website to GitHub-friendly Markdown
 ==========================================================================
 
 Prerequisites
