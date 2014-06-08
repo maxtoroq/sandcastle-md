@@ -26,5 +26,7 @@ Converting to Markdown
 
 Examples
 --------
-- [MvcAccount](https://github.com/maxtoroq/MvcAccount/tree/master/docs/api)
-- [DbExtensions](https://github.com/maxtoroq/DbExtensions/tree/master/docs/api)
+- [DbExtensions](https://github.com/maxtoroq/DbExtensions/tree/master/docs/api#readme)
+- [MvcAccount](https://github.com/maxtoroq/MvcAccount/tree/master/docs/api#readme)
+- [MvcCodeRouting](https://github.com/maxtoroq/MvcCodeRouting/tree/master/docs/api#readme)
+
