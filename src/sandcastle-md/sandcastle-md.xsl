@@ -20,12 +20,17 @@
    xmlns:local="http://maxtoroq.github.io/sandcastle-md"
    exclude-result-prefixes="#all">
 
-   <param name="local:line" select="'&#13;&#10;'"/>
-   <param name="local:default-code-lang" select="'csharp'"/>
-   <param name="local:remove-assembly-version" select="true()"/>
-   <param name="local:rewrite-msdn-domain" select="true()"/>
+   <param name="source-dir" select="resolve-uri('.', static-base-uri())"/>
+   <param name="output-dir" select="resolve-uri('markdown/', $source-dir)"/>
+   <param name="icons-source-dir" select="resolve-uri('icons/', $source-dir)"/>
+   <param name="icons-output-dir" select="resolve-uri('_icons/', $output-dir)"/>
    
-   <variable name="local:line-break" select="concat('  ', $local:line)"/>
+   <param name="new-line" select="'&#13;&#10;'"/>
+   <param name="default-code-lang" select="'csharp'"/>
+   <param name="remove-assembly-version" select="true()"/>
+   <param name="rewrite-msdn-domain" select="true()"/>
+   
+   <variable name="local:line-break" select="concat('  ', $new-line)"/>
 
    <output method="text"/>
 
@@ -33,16 +38,20 @@
    <template match="script" mode="#all"/>
 
    <template match="/">
+      <param name="local:topic" tunnel="yes"/>
+      <param name="local:output-uri" select="resolve-uri($local:topic/@local:md-url, $output-dir)" as="xs:anyURI" tunnel="yes"/>
       
-      <variable name="code-lang" select="((.//*[local:has-class(., 'OH_CodeSnippetContainerTabActive')])[1]/normalize-space(), $local:default-code-lang)[1]"/>
+      <variable name="code-lang" select="((.//*[local:has-class(., 'OH_CodeSnippetContainerTabActive')])[1]/normalize-space(), $default-code-lang)[1]"/>
       
       <variable name="sanitized">
          <apply-templates mode="local:identity-sanitize">
             <with-param name="local:code-lang" select="$code-lang" tunnel="yes"/>
          </apply-templates>
       </variable>
-
+      
       <apply-templates select="$sanitized" mode="local:sanitized">
+         <with-param name="local:input-uri" select="base-uri()" tunnel="yes"/>
+         <with-param name="local:output-uri" select="$local:output-uri" tunnel="yes"/>
          <with-param name="local:code-lang" select="$code-lang" tunnel="yes"/>
       </apply-templates>
    </template>
@@ -65,7 +74,7 @@
    </template>
 
    <template match="text()[matches(., ' Version:')]" mode="local:identity-sanitize">
-      <if test="$local:remove-assembly-version and preceding-sibling::span[@sdata='assembly']">
+      <if test="$remove-assembly-version and preceding-sibling::span[@sdata='assembly']">
          <value-of select="replace(., ' Version:.+$', '')"/>
       </if>
    </template>
@@ -81,17 +90,21 @@
       </apply-templates>
 
       <for-each select="$links">
-         <value-of select="$local:line"/>
+         <value-of select="$new-line"/>
          <value-of select="'[', @index, ']', ': '" separator=""/>
-         <value-of select="(@topic-href, @href)[1]"/>
+         <value-of select="(@new-href, @href)[1]"/>
+         <if test="@title/normalize-space()">
+            <text> </text>
+            <value-of select="'&quot;', @title, '&quot;'" separator=""/>
+         </if>
       </for-each>
    
    </template>
 
    <template match="/|node()" mode="local:get-links">
       <param name="local:topic" tunnel="yes"/>
+      <param name="local:input-uri" tunnel="yes"/>
       <param name="local:output-uri" tunnel="yes"/>
-      <param name="local:base-output-uri" tunnel="yes"/>
       
       <variable name="links" as="element()*">
          <for-each-group select=".//a[local:valid-link(.)]" group-by="@href">
@@ -103,33 +116,57 @@
                   <if test="not($ref-topic/@local:unused-topic)">
                      <element name="l" namespace="">
                         <attribute name="href" select="$href"/>
-                        <attribute name="topic-href">
-                           <sequence select="local:make-relative-uri(xs:anyURI($local:output-uri), resolve-uri($ref-topic/@local:md-url, $local:base-output-uri))"
-                              use-when="function-available('local:make-relative-uri')"/>
-                           <sequence select="$ref-topic/@local:md-url" 
-                              use-when="not(function-available('local:make-relative-uri'))"/>
-                        </attribute>
+                        <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($ref-topic/@local:md-url, $output-dir))"/>
                      </element>
                   </if>
                </when>
                <otherwise>
                   <element name="l" namespace="">
                      <attribute name="href" select="$href"/>
-                     <if test="matches($href, '^http://msdn2\.microsoft\.com/')">
-                        <attribute name="topic-href" select="replace($href, '^http://msdn2', 'http://msdn')"/>
+                     <if test="$rewrite-msdn-domain and matches($href, '^http://msdn2\.microsoft\.com/')">
+                        <attribute name="new-href" select="replace($href, '^http://msdn2', 'http://msdn')"/>
                      </if>
+                     <attribute name="title" select="@title"/>
                   </element>
                </otherwise>
             </choose>
          </for-each-group>
       </variable>
       
-      <for-each select="$links">
+      <variable name="images" as="element()*">
+         <variable name="base-uri" select="document-uri(root())"/>
+         <for-each-group select=".//img" group-by="@src">
+            <variable name="src" select="current-grouping-key()"/>
+            <variable name="same-alt" select="count(distinct-values(current-group()/@alt)) eq 1"/>
+            <variable name="alt" select="@alt"/>
+            <variable name="relative-to-icons-uri" select="local:make-relative-uri($icons-source-dir, resolve-uri($src, $local:input-uri))"/>
+            <variable name="is-icon" select="not(contains($relative-to-icons-uri, '/'))"/>
+            
+            <element name="l" namespace="">
+               <attribute name="href" select="$src"/>
+               <attribute name="title" select="@title"/>
+               <if test="$same-alt 
+                  and normalize-space($alt)
+                  and not($alt castable as xs:integer)">
+                  
+                  <attribute name="index" select="$alt"/>
+                  <attribute name="alt" select="$alt"/>
+               </if>
+               <if test="$is-icon">
+                  <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($relative-to-icons-uri, $icons-output-dir))"/>
+               </if>
+            </element>
+         </for-each-group>
+      </variable>
+      
+      <for-each select="$links, $images[not(@index)]">
          <copy>
             <copy-of select="@*"/>
             <attribute name="index" select="position()"/>
          </copy>
       </for-each>
+      
+      <sequence select="$images[@index]"/>
          
    </template>
       
@@ -152,7 +189,7 @@
          <apply-templates select="preceding-sibling::node()" mode="local:text"/>
 
          <for-each-group select="., following-sibling::node()" group-starting-with="*[local:has-class(., 'OH_CollapsibleAreaRegion')]">
-            <value-of select="$local:line"/>
+            <value-of select="$new-line"/>
             <apply-templates select="." mode="local:region-title"/>
             <apply-templates select="current-group()[position() gt 1]" mode="local:text"/>
          </for-each-group>
@@ -161,7 +198,7 @@
 
    <template match="div[@id='mainBody']/div[local:has-class(., 'summary')]" mode="local:text">
       <next-match/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template match="div[local:has-class(., 'OH_regiontitle')]" mode="local:region-title">
@@ -170,34 +207,34 @@
 
    <template match="p[normalize-space()]" mode="local:text">
       <if test="preceding-sibling::node()[1][self::text()]">
-         <value-of select="$local:line"/>
+         <value-of select="$new-line"/>
       </if>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <apply-templates mode="#current"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template match="p[not(normalize-space())]" mode="local:text">
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template match="div[local:has-class(., 'OH_CodeSnippetContainer')]" mode="local:text">
       <param name="local:code-lang" tunnel="yes"/>
       
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <text>```</text>
       <value-of select="local:code-lang-github($local:code-lang)"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <value-of select="(.//*[local:has-class(., 'OH_CodeSnippetContainerCode')])[1]/string()"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <text>```</text>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
    
    <template match="table" mode="local:text">
-      <param name="local:skip-cols" select="if ((.//th)[1][local:has-class(., 'ps_iconColumn')]) then 1 else 0" tunnel="yes"/>
+      <param name="local:skip-cols" select="0" tunnel="yes"/>
       
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
 
       <variable name="normalized-table" as="element()">
          <call-template name="local:table-data-to-md">
@@ -229,7 +266,7 @@
          <variable name="r-pos" select="position()"/>
 
          <if test="$r-pos gt 1">
-            <value-of select="$local:line"/>
+            <value-of select="$new-line"/>
          </if>
          
          <for-each select="1 to count($headers)">
@@ -246,7 +283,7 @@
          </for-each>
 
          <if test="$r-pos eq 1">
-            <value-of select="$local:line"/>
+            <value-of select="$new-line"/>
 
             <for-each select="1 to count($headers)">
                <variable name="i" select="."/>
@@ -262,7 +299,7 @@
          
       </for-each>
       
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    
    </template>
 
@@ -278,7 +315,7 @@
             <call-template name="local:md-h4"/>
          </for-each>
          <apply-templates select="current-group()[position() gt 1]" mode="local:text"/>
-         <value-of select="$local:line"/>
+         <value-of select="$new-line"/>
       </for-each-group>
    </template>
    
@@ -312,6 +349,31 @@
 
    <template match="a[not(local:valid-link(.))]" mode="local:text"/>
 
+   <template match="img[@alt/normalize-space()]" mode="local:text">
+      <param name="local:links" tunnel="yes"/>
+      
+      <variable name="links" select="$local:links[@href = current()/@src]"/>
+      <variable name="index" select="($links[@alt = current()/@alt], $links[not(@alt)])[1]/@index"/>
+
+      <if test="$index">
+         <text>![</text>
+         <value-of select="$index"/>
+         <text>]</text>
+      </if>
+   </template>
+      
+   <template match="img[not(@alt/normalize-space())]" mode="local:text">
+      <param name="local:links" tunnel="yes"/>
+      
+      <variable name="index" select="$local:links[@href = current()/@src and not(@alt)]/@index"/>
+
+      <if test="$index">
+         <text>![][</text>
+         <value-of select="$index"/>
+         <text>]</text>
+      </if>
+   </template>
+   
    <template match="span[local:has-class(., 'selflink')]" mode="local:text">
       <value-of select="'**', normalize-space(), '**'" separator=""/>
    </template>
@@ -370,9 +432,9 @@
       <variable name="title" select="string($title-result)"/>
       
       <value-of select="$title"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <value-of select="string-join(for $c in (1 to string-length($title)) return '=', '')"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template name="local:md-h2">
@@ -382,27 +444,27 @@
 
       <variable name="title" select="string($title-result)"/>
       
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <value-of select="$title"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <value-of select="string-join(for $c in (1 to string-length($title)) return '-', '')"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template name="local:md-h3">
       <param name="content"/>
       
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <text>### </text>
       <value-of select="string($content)"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
 
    <template name="local:md-h4">
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
       <text>#### </text>
       <apply-templates select="." mode="local:text"/>
-      <value-of select="$local:line"/>
+      <value-of select="$new-line"/>
    </template>
    
    <template name="local:table-data-to-md">

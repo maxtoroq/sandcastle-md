@@ -22,9 +22,6 @@
 
    <import href="sandcastle-md.xsl"/>
    
-   <param name="source-dir" select="resolve-uri('.', static-base-uri())"/>
-   <param name="output-dir" select="resolve-uri('markdown/', $source-dir)"/>
-   
    <output method="text"/>
 
    <template name="main">
@@ -126,18 +123,18 @@
 
    <template match="topic">
 
-      <variable name="source" select="doc(resolve-uri(@local:html-url, resolve-uri('html/', $source-dir)))"/>
+      <variable name="input-uri" select="resolve-uri(@local:html-url, resolve-uri('html/', $source-dir))"/>
+      <variable name="source" select="doc($input-uri)"/>
       <variable name="output-uri" select="resolve-uri(@local:md-url, $output-dir)"/>
       
       <result-document href="{$output-uri}">
          <apply-templates select="$source">
             <with-param name="local:topic" select="." tunnel="yes"/>
-            <with-param name="local:base-output-uri" select="$output-dir" tunnel="yes"/>
             <with-param name="local:output-uri" select="$output-uri" tunnel="yes"/>
          </apply-templates>
       </result-document>
 
-      <value-of select="'Created ', @local:md-url, $local:line" separator=""/>
+      <value-of select="'Created ', @local:md-url, $new-line" separator=""/>
 
       <apply-templates/>
    </template>
