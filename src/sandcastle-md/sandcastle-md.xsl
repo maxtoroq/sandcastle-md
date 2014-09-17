@@ -232,7 +232,11 @@
    </template>
    
    <template match="table" mode="local:text">
-      <param name="local:skip-cols" select="0" tunnel="yes"/>
+      <param name="local:skip-cols" select="
+         if ((.//th)[1][local:has-class(., 'ps_iconColumn')]) then 
+         (if (every $cell in ..//tr/td[1] satisfies $cell[not(.//* or normalize-space())]) then 1 else 0)
+         else 0
+      " tunnel="yes"/>
       
       <value-of select="$new-line"/>
 
