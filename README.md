@@ -3,7 +3,7 @@
 
 Prerequisites
 -------------
-It is assumed that you already have a working [Sandcastle]((https://shfb.codeplex.com/) project. Checkout the appropriate branch based on the version of Sancastle you are using: 
+It is assumed that you already have a working [Sandcastle](https://shfb.codeplex.com/) project. Checkout the appropriate branch based on the version of Sancastle you are using: 
 
 - [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365): The **master** branch supports this version.
 - [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566): The **v2014.2.15** branch supports this version.
