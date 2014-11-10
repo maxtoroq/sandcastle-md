@@ -62,7 +62,7 @@
       </copy>
    </template>
 
-   <template match="*[* and not(text()[normalize-space()])]/text()" mode="local:identity-sanitize">
+   <template match="*[* and not(self::pre or @xml:space='preserve') and not(text()[normalize-space()])]/text()" mode="local:identity-sanitize">
       <!-- Remove insignificant whitespace -->
    </template>
 
@@ -74,7 +74,7 @@
    </template>
 
    <template match="text()[matches(., ' Version:')]" mode="local:identity-sanitize">
-      <if test="$remove-assembly-version and preceding-sibling::span[@sdata='assembly']">
+      <if test="$remove-assembly-version and preceding-sibling::strong[normalize-space() eq 'Assembly:']">
          <value-of select="replace(., ' Version:.+$', '')"/>
       </if>
    </template>
@@ -170,13 +170,13 @@
          
    </template>
       
-   <template match="span[@id and string() = '&#160;' and following-sibling::*[1][self::script and matches(string(), 'addToLanSpecTextIdSet\(')]]" mode="local:identity-sanitize">
+   <template match="span[@id and not(normalize-space()) and following-sibling::*[1][self::script and matches(string(), 'AddLanguageSpecificTextSet\(')]]" mode="local:identity-sanitize">
       <param name="local:code-lang" tunnel="yes"/>
       
       <variable name="script" select="following-sibling::script[1]"/>
       <variable name="string" select="substring-before(substring-after($script, '&quot;'), '&quot;')"/>
       <variable name="params" select="tokenize(substring-after($string, '?'), '\|')"/>
-      <variable name="selected-param" select="($params[substring-before(., '=') eq local:code-lang-short($local:code-lang)], $params[1])[1]"/>
+      <variable name="selected-param" select="$params[substring-before(., '=') = (local:code-lang-short($local:code-lang), 'nu')][1]"/>
       <value-of select="substring-after($selected-param, '=')"/>
    </template>
       
@@ -405,6 +405,8 @@
          </with-param>
       </call-template>
    </template>
+   
+   <template match="h4[normalize-space() eq 'Reference']" mode="local:text"/>
 
    <template match="b[normalize-space()]|strong[normalize-space()]" mode="local:text">
       <text>**</text>

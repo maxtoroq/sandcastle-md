@@ -3,7 +3,12 @@
 
 Prerequisites
 -------------
-It is assumed that you already have a working Sandcastle project. This tool has been tested with [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566) only. If you have an older version, please upgrade. If you have a newer version and something is not working please let me know on the issue tracker.
+It is assumed that you already have a working [Sandcastle]((https://shfb.codeplex.com/) project. Checkout the appropriate branch based on the version of Sancastle you are using: 
+
+- [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365): The **master** branch supports this version.
+- [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566): The **v2014.2.15** branch supports this version.
+
+If you are using an older version, please upgrade. If you are using a newer version and find an issue please let me know on the issue tracker.
 
 Open your Sandcastle project and make sure the following settings are in place:
 
