@@ -1,4 +1,5 @@
 ﻿cfw.gif
+CodeExample.png
 privclass.gif
 privdelegate.gif
 privenumeration.gif
