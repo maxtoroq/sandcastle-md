@@ -30,7 +30,7 @@ Converting to Markdown
 1. Open the solution in Visual Studio 2013 and build to restore packages and compile the executable.
 2. Execute `.\src\sandcastle-md\bin\Debug\sandcastle-md.exe <source website path> [output path]`. You can invoke this command from the Package Manager Console.
 
-You can also automate process, for an example see [this script](https://github.com/maxtoroq/DbExtensions/blob/master/build/docs/build-docs.ps1).
+You can also automate the build, for an example see [this script](https://github.com/maxtoroq/DbExtensions/blob/master/build/docs/build-docs.ps1).
 
 Examples
 --------
