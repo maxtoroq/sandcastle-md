@@ -3,10 +3,11 @@
 
 Prerequisites
 -------------
-It is assumed that you already have a working [Sandcastle](https://shfb.codeplex.com/) project. Checkout the appropriate branch based on the version of Sandcastle you are using: 
+It is assumed that you already have a working [Sandcastle](https://shfb.codeplex.com/) project. This tool has been tested with:
 
-- [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365): The **master** branch supports this version.
-- [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566): The **v2014.2.15** branch supports this version.
+- [v2014.11.22.0](https://shfb.codeplex.com/releases/view/123728)
+- [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365)
+- [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566) (The *v2014.2.15* branch supports this version)
 
 If you are using an older version, please upgrade. If you are using a newer version and find an issue please let me know on the issue tracker.
 
@@ -28,6 +29,8 @@ Converting to Markdown
 ----------------------
 1. Open the solution in Visual Studio 2013 and build to restore packages and compile the executable.
 2. Execute `.\src\sandcastle-md\bin\Debug\sandcastle-md.exe <source website path> [output path]`. You can invoke this command from the Package Manager Console.
+
+You can also automate process, for an example see [this script](https://github.com/maxtoroq/DbExtensions/blob/master/build/docs/build-docs.ps1).
 
 Examples
 --------
