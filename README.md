@@ -11,6 +11,8 @@ It is assumed that you already have a working [Sandcastle](https://shfb.codeplex
 
 If you are using an older version, please upgrade. If you are using a newer version and find an issue please let me know on the issue tracker.
 
+Project Settings
+----------------
 Open your Sandcastle project and make sure the following settings are in place:
 
 * Build
