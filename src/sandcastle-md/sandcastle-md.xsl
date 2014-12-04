@@ -123,9 +123,14 @@
                <otherwise>
                   <element name="l" namespace="">
                      <attribute name="href" select="$href"/>
-                     <if test="$rewrite-msdn-domain and matches($href, '^http://msdn2\.microsoft\.com/')">
-                        <attribute name="new-href" select="replace($href, '^http://msdn2', 'http://msdn')"/>
-                     </if>
+                     <choose>
+                        <when test="$rewrite-msdn-domain and matches($href, '^http://msdn2\.microsoft\.com/')">
+                           <attribute name="new-href" select="replace($href, '^http://msdn2', 'http://msdn')"/>
+                        </when>
+                        <when test="$href eq '#fullInheritance'">
+                           <attribute name="new-href" select="'#inheritance-hierarchy-continued'"/>
+                        </when>
+                     </choose>
                      <attribute name="title" select="@title"/>
                   </element>
                </otherwise>
@@ -205,6 +210,12 @@
       <call-template name="local:md-h2"/>
    </template>
 
+   <template match="div[local:has-class(., 'OH_regiontitle') and normalize-space() eq 'Inheritance Hierarchy' and parent::*[@id='fullInheritance']]" mode="local:region-title">
+      <call-template name="local:md-h2">
+         <with-param name="content" select="'Inheritance Hierarchy (Continued)'"/>
+      </call-template>
+   </template>
+
    <template match="p[normalize-space()]" mode="local:text">
       <if test="preceding-sibling::node()[1][self::text()]">
          <value-of select="$new-line"/>
@@ -215,6 +226,9 @@
    </template>
 
    <template match="p[not(normalize-space())]" mode="local:text">
+      <if test="preceding-sibling::*[1][not(self::br or local:is-block-element(.))]">
+         <value-of select="$new-line"/>
+      </if>
       <value-of select="$new-line"/>
    </template>
 
@@ -444,11 +458,11 @@
    </template>
 
    <template name="local:md-h2">
-      <variable name="title-result">
+      <param name="content">
          <apply-templates select="." mode="local:text"/>
-      </variable>
+      </param>
 
-      <variable name="title" select="string($title-result)"/>
+      <variable name="title" select="string($content)"/>
       
       <value-of select="$new-line"/>
       <value-of select="$title"/>
@@ -507,7 +521,7 @@
    <function name="local:valid-link" as="xs:boolean">
       <param name="el" as="element()" />
 
-      <sequence select="boolean($el/self::a[@href and not(starts-with(@href, '#')) and not(starts-with(@href, 'mailto:'))])"/>
+      <sequence select="boolean($el/self::a[@href and (@href = '#fullInheritance' or (every $s in ('#', 'mailto:') satisfies not(starts-with(@href, $s))))])"/>
    </function>
       
    <function name="local:has-class" as="xs:boolean">
@@ -564,6 +578,12 @@
             <sequence select="$lang"/>
          </otherwise>
       </choose>
+   </function>
+
+   <function name="local:is-block-element" as="xs:boolean">
+      <param name="el" as="element()"/>
+
+      <sequence select="name($el) = ('address', 'article', 'aside', 'audio', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'noscript', 'ol', 'output', 'p', 'pre', 'section', 'table', 'ul', 'video')"/>
    </function>
    
 </stylesheet>
