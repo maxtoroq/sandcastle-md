@@ -330,7 +330,7 @@
    <template match="dl" mode="local:text">
       <for-each-group select="*" group-starting-with="dt">
          <for-each select="current-group()[1]">
-            <call-template name="local:md-h4"/>
+            <call-template name="local:md-h5"/>
          </for-each>
          <apply-templates select="current-group()[position() gt 1]" mode="local:text"/>
          <value-of select="$new-line"/>
@@ -413,7 +413,7 @@
    </template>
 
    <template match="h4" mode="local:text">
-      <call-template name="local:md-h3">
+      <call-template name="local:md-h4">
          <with-param name="content">
             <next-match/>
          </with-param>
@@ -443,11 +443,11 @@
    <!-- Helpers -->
 
    <template name="local:md-h1">
-      <variable name="title-result">
+      <param name="content">
          <apply-templates select="." mode="local:text"/>
-      </variable>
+      </param>
 
-      <variable name="title" select="string($title-result)"/>
+      <variable name="title" select="string($content)"/>
       
       <value-of select="$title"/>
       <value-of select="$new-line"/>
@@ -470,18 +470,35 @@
    </template>
 
    <template name="local:md-h3">
-      <param name="content"/>
+      <param name="content">
+         <apply-templates select="." mode="local:text"/>
+      </param>
       
       <value-of select="$new-line"/>
       <text>### </text>
-      <value-of select="string($content)"/>
+      <value-of select="$content"/>
       <value-of select="$new-line"/>
    </template>
 
    <template name="local:md-h4">
+      <param name="content">
+         <apply-templates select="." mode="local:text"/>
+      </param>
+      
       <value-of select="$new-line"/>
       <text>#### </text>
-      <apply-templates select="." mode="local:text"/>
+      <value-of select="$content"/>
+      <value-of select="$new-line"/>
+   </template>
+
+   <template name="local:md-h5">
+      <param name="content">
+         <apply-templates select="." mode="local:text"/>
+      </param>
+
+      <value-of select="$new-line"/>
+      <text>##### </text>
+      <value-of select="$content"/>
       <value-of select="$new-line"/>
    </template>
    
