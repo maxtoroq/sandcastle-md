@@ -420,8 +420,6 @@
       </call-template>
    </template>
    
-   <template match="h4[normalize-space() eq 'Reference']" mode="local:text"/>
-
    <template match="b[normalize-space()]|strong[normalize-space()]" mode="local:text">
       <text>**</text>
       <apply-templates mode="#current"/>
