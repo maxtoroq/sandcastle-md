@@ -1,10 +1,10 @@
-﻿[sandcastle-md](https://maxtoroq.github.io/sandcastle-md/) — Your API reference on GitHub
-=========================================================================================
-sandcastle-md converts your Sandcastle-generated HTML website to GitHub Flavored Markdown.
+﻿[sandcastle-md](http://maxtoroq.github.io/sandcastle-md/) — Your API reference on GitHub
+========================================================================================
+sandcastle-md converts your [Sandcastle](https://github.com/EWSoftware/SHFB)-generated HTML website to GitHub Flavored Markdown.
 
 Prerequisites
 -------------
-It is assumed that you already have a working [Sandcastle](https://github.com/EWSoftware/SHFB) project. This tool has been tested with:
+It is assumed that you already have a working Sandcastle project. This tool has been tested with:
 
 - [v2014.11.22.0](https://shfb.codeplex.com/releases/view/123728)
 - [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365)
