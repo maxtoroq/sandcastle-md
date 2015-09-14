@@ -1,5 +1,6 @@
-﻿Convert your Sandcastle-generated HTML website to GitHub-friendly Markdown
-==========================================================================
+﻿[sandcastle-md](https://maxtoroq.github.io/sandcastle-md/) — Your API reference on GitHub
+=========================================================================================
+sandcastle-md converts your Sandcastle-generated HTML website to GitHub Flavored Markdown.
 
 Prerequisites
 -------------
@@ -29,10 +30,30 @@ Open your Sandcastle project and make sure the following settings are in place:
 
 Converting to Markdown
 ----------------------
-1. Open the solution in Visual Studio 2013 and build to restore packages and compile the executable.
-2. Execute `.\src\sandcastle-md\bin\Debug\sandcastle-md.exe <source website path> [output path]`.
+Build your Sandcastle project (if you haven't already):
 
-You can also automate the build, for an example see [this script](https://github.com/maxtoroq/DbExtensions/blob/master/build/docs/build-docs.ps1). See also [XCOPY/NuGet Build Server Deployment](http://ewsoftware.github.io/SHFB/html/50ad2c8c-5004-4b4c-a77f-97b8c403c9f2.htm).
+```powershell
+MSBuild.exe <your .shfbproj project>
+```
+
+Restore NuGet packages and build sandcastle-md:
+
+```powershell
+.\packages\restore.ps1
+MSBuild.exe .\sandcastle-md.sln
+```
+
+Before executing it's recommended to clear any previous output, to make sure any deleted topics do not remain:
+
+```powershell
+rm <output path> -Recurse
+```
+
+Finally, execute:
+
+```powershell
+.\src\sandcastle-md\bin\Debug\sandcastle-md.exe <source website path> [output path]
+```
 
 Examples
 --------

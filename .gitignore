@@ -1,7 +1,9 @@
+.nuget/
+.vs/
+packages/
+
 [Bb]in
 [Oo]bj
 [Tt]est[Rr]esults
 *.suo
 *.user
-packages
-[Nn]u[Gg]et.exe
