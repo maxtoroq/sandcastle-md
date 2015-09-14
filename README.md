@@ -25,8 +25,6 @@ Open your Sandcastle project and make sure the following settings are in place:
   - Check *Include root namespace container* and set the title to something like **&lt;project name> Namespaces**
 * Help 1/Website
   - Set *Website SDK link type* to **Online links to MSDN help topics**
-* Plug-Ins
-  - If your project depends on Microsoft products that are not part of the .NET Framework BCL (e.g. ASP.NET MVC) you need to configure the [Additional Reference Links](http://ewsoftware.github.io/SHFB/html/15b6b7be-3778-4487-b524-d558d02e6460.htm) plug-in, for more info see [this](http://stackoverflow.com/questions/9082149).
 
 Converting to Markdown
 ----------------------
