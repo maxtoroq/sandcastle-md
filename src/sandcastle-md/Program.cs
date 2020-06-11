@@ -53,7 +53,7 @@ namespace sandcastle_md {
          transformer.Run(serializer);
 
          var iconsSourceUri = new Uri(sourceUri, "icons");
-         var iconsDestUri = new Uri(outputUri, "_icons");
+         var iconsDestUri = new Uri(outputUri, "icons");
 
          DirectoryInfo iconsSourceDir = new DirectoryInfo(iconsSourceUri.LocalPath);
          DirectoryInfo iconsDestDir;

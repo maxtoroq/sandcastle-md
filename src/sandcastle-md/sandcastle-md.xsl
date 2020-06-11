@@ -23,7 +23,7 @@
    <param name="source-dir" select="resolve-uri('.', static-base-uri())"/>
    <param name="output-dir" select="resolve-uri('markdown/', $source-dir)"/>
    <param name="icons-source-dir" select="resolve-uri('icons/', $source-dir)"/>
-   <param name="icons-output-dir" select="resolve-uri('_icons/', $output-dir)"/>
+   <param name="icons-output-dir" select="resolve-uri('icons/', $output-dir)"/>
    
    <param name="new-line" select="'&#13;&#10;'"/>
    <param name="default-code-lang" select="'csharp'"/>
