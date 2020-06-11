@@ -1,6 +1,6 @@
-﻿[sandcastle-md](http://maxtoroq.github.io/sandcastle-md/) — Your API reference on GitHub
-========================================================================================
-sandcastle-md converts your [Sandcastle](https://github.com/EWSoftware/SHFB)-generated HTML website to GitHub Flavored Markdown.
+﻿[sandcastle-md] — Your API reference on GitHub
+==============================================
+sandcastle-md converts your [Sandcastle][SHFB]-generated HTML website to GitHub Flavored Markdown.
 
 Prerequisites
 -------------
@@ -58,3 +58,6 @@ Examples
 - [DbExtensions](https://github.com/maxtoroq/DbExtensions/tree/master/docs/api#readme)
 - [MvcAccount](https://github.com/maxtoroq/MvcAccount/tree/master/docs/api#readme)
 - [MvcCodeRouting](https://github.com/maxtoroq/MvcCodeRouting/tree/master/docs/api#readme)
+
+[sandcastle-md]: https://github.com/maxtoroq/sandcastle-md
+[SHFB]: https://github.com/EWSoftware/SHFB

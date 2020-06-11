@@ -182,7 +182,7 @@
       <variable name="string" select="substring-before(substring-after($script, '&quot;'), '&quot;')"/>
       <variable name="params" select="tokenize(substring-after($string, '?'), '\|')"/>
       <variable name="selected-param" select="$params[substring-before(., '=') = (local:code-lang-short($local:code-lang), 'nu')][1]"/>
-      <value-of select="substring-after($selected-param, '=')"/>
+      <value-of select="replace(substring-after($selected-param, '='), '&lt;', '&amp;lt;')"/>
    </template>
       
    <template match="td[local:has-class(., 'OH_tdTitleColumn')]" mode="local:page">
