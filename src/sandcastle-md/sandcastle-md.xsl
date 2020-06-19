@@ -48,7 +48,7 @@
             <with-param name="local:code-lang" select="$code-lang" tunnel="yes"/>
          </apply-templates>
       </variable>
-      
+
       <apply-templates select="$sanitized" mode="local:sanitized">
          <with-param name="local:input-uri" select="base-uri()" tunnel="yes"/>
          <with-param name="local:output-uri" select="$local:output-uri" tunnel="yes"/>
@@ -66,7 +66,7 @@
       <!-- Remove insignificant whitespace -->
    </template>
 
-   <template match="div[not(normalize-space())]" mode="local:identity-sanitize"/>
+   <template match="div[not(normalize-space())] | span[not(normalize-space())]" mode="local:identity-sanitize"/>
 
    <template match="div[@id='enumerationSection']" mode="local:identity-sanitize">
       <!-- Unwrap -->
@@ -200,6 +200,8 @@
          </for-each-group>
       </for-each>
    </template>
+
+   <template match="div[@id='mainBody']/text()[position() eq 1 and not(normalize-space())]" mode="local:text"/>
 
    <template match="div[@id='mainBody']/div[local:has-class(., 'summary')]" mode="local:text">
       <next-match/>
