@@ -1,34 +1,32 @@
 ﻿[sandcastle-md] — Your API reference on GitHub
 ==============================================
-sandcastle-md converts your [Sandcastle][SHFB]-generated HTML website to GitHub Flavored Markdown.
+sandcastle-md converts your [SHFB]-generated HTML website to Markdown.
 
-Prerequisites
--------------
-It is assumed that you already have a working Sandcastle project. This tool has been tested with:
+- Browse your API reference on GitHub.com or using any tool that supports Markdown
+- Host your API reference on GitHub Pages, using your own layout and fully integrated with your site
 
-- [v2014.11.22.0](https://shfb.codeplex.com/releases/view/123728)
-- [v2014.5.31.0](https://shfb.codeplex.com/releases/view/121365)
-- [v2014.2.15.0 Beta](https://shfb.codeplex.com/releases/view/118566) (The [v2014.2.15](https://github.com/maxtoroq/sandcastle-md/tree/v2014.2.15) branch supports this version)
+Additionaly, sandcastle-md makes the following enhancements to SHFB's output:
 
-If you are using an older version, please upgrade. If you are using a newer version and find an issue please let me know on the issue tracker.
+- Transforms the flat topic file structure to a hierarchical, one directory per namespace/type
+- Excludes overloads topics
 
 Project Settings
 ----------------
-Open your Sandcastle project and make sure the following settings are in place:
+Open your SHFB project and make sure the following settings are in place:
 
 * Build
-  - Uncheck *Clean intermediate files after a succesful build*
-  - Uncheck *Indent rendered HTML*
+  - Uncheck *Clean intermediate files after a succesful build*<br/> `<CleanIntermediates>False</CleanIntermediates>`
+  - Uncheck *Indent rendered HTML*<br/> `<IndentHtml>False</IndentHtml>`
 * Help File
-  - Set *Topic file naming method* to **Member name**
-  - Set *Presentation Style* to **VS2010**
-  - Check *Include root namespace container* and set the title to something like **&lt;project name> Namespaces**
+  - Set *Topic file naming method* to **Member name**<br/> `<NamingMethod>MemberName</NamingMethod>`
+  - Set *Presentation Style* to **VS2010**<br/> `<PresentationStyle>VS2010</PresentationStyle>`
+  - Check *Include root namespace container* and set the title to something like **&lt;project name> Namespaces**<br/>  `<RootNamespaceContainer>True</RootNamespaceContainer>`<br/>`<RootNamespaceTitle>{Project Name} Namespaces</RootNamespaceTitle>`
 * Help 1/Website
   - Set *Website SDK link type* to **Online links to MSDN help topics**
 
 Converting to Markdown
 ----------------------
-Build your Sandcastle project (if you haven't already):
+Build your SHFB project (if you haven't already):
 
 ```powershell
 MSBuild.exe <your .shfbproj project>
@@ -55,8 +53,8 @@ Finally, execute:
 
 Examples
 --------
-- [DbExtensions](https://github.com/maxtoroq/DbExtensions/tree/master/docs/api#readme)
-- [MvcAccount](https://github.com/maxtoroq/MvcAccount/tree/master/docs/api#readme)
+- [DbExtensions](https://github.com/maxtoroq/DbExtensions/tree/master/docs/api#readme) (GitHub.com)
+- [DbExtensions](https://maxtoroq.github.io/DbExtensions/docs/api/) (GitHub Pages)
 - [MvcCodeRouting](https://github.com/maxtoroq/MvcCodeRouting/tree/master/docs/api#readme)
 
 [sandcastle-md]: https://github.com/maxtoroq/sandcastle-md
