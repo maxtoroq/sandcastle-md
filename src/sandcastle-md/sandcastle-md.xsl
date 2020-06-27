@@ -66,7 +66,7 @@
       <!-- Remove insignificant whitespace -->
    </template>
 
-   <template match="div[not(normalize-space())] | span[not(normalize-space())]" mode="local:identity-sanitize"/>
+   <template match="div[not(normalize-space())] | span[not(normalize-space())]" mode="local:identity-sanitize" priority="0"/>
 
    <template match="div[@id='enumerationSection']" mode="local:identity-sanitize">
       <!-- Unwrap -->
@@ -98,7 +98,6 @@
             <value-of select="'&quot;', @title, '&quot;'" separator=""/>
          </if>
       </for-each>
-   
    </template>
 
    <template match="/|node()" mode="local:get-links">
@@ -320,7 +319,6 @@
       </for-each>
       
       <value-of select="$new-line"/>
-   
    </template>
 
    <template match="table//font[@color]" mode="local:text">
@@ -350,7 +348,6 @@
       <if test="$result">
          <value-of select="$local:line-break"/>
       </if>
-   
    </template>
 
    <template match="a[local:valid-link(.)]" mode="local:text">
