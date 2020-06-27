@@ -5,10 +5,10 @@ sandcastle-md converts your [SHFB]-generated HTML website to Markdown.
 - Browse your API reference on GitHub.com or using any tool that supports Markdown
 - Host your API reference on GitHub Pages, using your own layout and fully integrated with your site
 
-Additionaly, sandcastle-md makes the following enhancements to SHFB's output:
+Additionaly, sandcastle-md makes the following changes to SHFB's output:
 
 - Transforms the flat topic file structure to a hierarchical, one directory per namespace/type
-- Excludes overloads topics
+- Excludes topics that group members into categories e.g. Properties, Methods, Overloads, etc.
 
 Project Settings
 ----------------
