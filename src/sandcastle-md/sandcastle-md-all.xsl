@@ -31,6 +31,10 @@
       </variable>
 
       <apply-templates select="$toc/*"/>
+
+      <result-document href="{resolve-uri('_toc.xml', $output-dir)}" method="xml" indent="yes">
+         <apply-templates select="$toc" mode="write-toc"/>
+      </result-document>
    </template>
 
    <template match="@*|node()" mode="read-toc">
@@ -145,5 +149,58 @@
 
       <sequence select="tokenize($id, '[:\.]')"/>
    </function>
+
+   <template match="@* | node()" mode="write-toc">
+      <copy copy-namespaces="no">
+         <apply-templates select="@* | node()" mode="#current"/>
+      </copy>
+   </template>
+
+   <template match="*[* and not(text()[normalize-space()])]/text()" mode="write-toc">
+      <!-- Remove insignificant whitespace -->
+   </template>
+
+   <template match="@*[namespace-uri()]" mode="write-toc" priority="0"/>
+
+   <template match="topic[@local:unused-topic]" mode="write-toc">
+      <apply-templates mode="#current"/>
+   </template>
    
+   <template match="topic/@file | topic/@project" mode="write-toc"/>
+   
+   <template match="topic/@local:html-url" mode="write-toc"/>
+
+   <template match="topic/@local:md-url" mode="write-toc">
+      <attribute name="file" select="."/>
+   </template>
+
+   <template match="topic[matches(@id, '^[N]:')]" mode="write-toc">
+      <copy copy-namespaces="no">
+         <apply-templates select="@*" mode="#current"/>
+         <attribute name="title" select="substring-after(@id, ':')"/>
+         <apply-templates select="node()" mode="#current"/>
+      </copy>
+   </template>
+
+   <template match="topic[matches(@id, '^[T]:')]" mode="write-toc">
+      <variable name="input-uri" select="resolve-uri(@local:html-url, resolve-uri('html/', $source-dir))"/>
+      <variable name="source" select="doc($input-uri)"/>
+      <variable name="h1" select="($source/html/body//h1)[1]"/>
+      <variable name="sanitized-h1" as="element()">
+         <apply-templates select="$h1" mode="local:identity-sanitize">
+            <with-param name="local:code-lang" select="$default-code-lang" tunnel="yes"/>
+         </apply-templates>
+      </variable>
+      <variable name="title" as="xs:string">
+         <value-of>
+            <apply-templates select="$sanitized-h1" mode="local:text"/>
+         </value-of>
+      </variable>
+      <copy copy-namespaces="no">
+         <apply-templates select="@*" mode="#current"/>
+         <attribute name="title" select="replace(replace($title, '&amp;lt;', '&lt;'), '^(.+) [A-Za-z]+$', '$1')"/>
+         <apply-templates select="node()" mode="#current"/>
+      </copy>
+   </template>
+
 </stylesheet>
