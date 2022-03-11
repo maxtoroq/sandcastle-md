@@ -27,6 +27,8 @@
    
    <param name="new-line" select="'&#13;&#10;'"/>
    <param name="default-code-lang" select="'csharp'"/>
+   <param name="remove-assembly-name" select="true()"/>
+   <param name="remove-assembly-file-name" select="false()"/>
    <param name="remove-assembly-version" select="true()"/>
    <param name="rewrite-msdn-domain" select="true()"/>
    
@@ -73,12 +75,25 @@
       <apply-templates mode="#current"/>
    </template>
 
-   <template match="text()[matches(., ' Version:')]" mode="local:identity-sanitize">
-      <if test="$remove-assembly-version and preceding-sibling::strong[normalize-space() eq 'Assembly:']">
-         <value-of select="replace(., ' Version:.+$', '')"/>
-      </if>
+   <template match="text()[preceding-sibling::node()[1][normalize-space() eq 'Assembly:']]" mode="local:identity-sanitize">
+      <analyze-string select="normalize-space()" regex="^(.+) (\(in (.+)\)) (Version: .+)$">
+         <matching-substring>
+            <text> </text>
+            <value-of separator=" ">
+               <if test="not($remove-assembly-name)">
+                  <sequence select="regex-group(1)"/>
+               </if>
+               <if test="not($remove-assembly-file-name)">
+                  <sequence select="regex-group(if ($remove-assembly-name) then 3 else 2)"/>
+               </if>
+               <if test="not($remove-assembly-version)">
+                  <sequence select="regex-group(4)"/>
+               </if>
+            </value-of>
+         </matching-substring>
+      </analyze-string>
    </template>
-      
+
    <template match="/" mode="local:sanitized">
 
       <variable name="links" as="element()*">
