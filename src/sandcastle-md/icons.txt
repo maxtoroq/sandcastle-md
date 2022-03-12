@@ -21,16 +21,5 @@ protmethod.gif
 protoperator.gif
 protproperty.gif
 protstructure.gif
-pubclass.gif
-pubdelegate.gif
-pubenumeration.gif
-pubevent.gif
-pubextension.gif
-pubfield.gif
-pubinterface.gif
-pubmethod.gif
-puboperator.gif
-pubproperty.gif
-pubstructure.gif
 static.gif
 xna.gif

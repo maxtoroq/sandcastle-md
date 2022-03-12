@@ -172,7 +172,25 @@
                   <attribute name="alt" select="$alt"/>
                </if>
                <if test="$is-icon">
-                  <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($relative-to-icons-uri, $icons-output-dir))"/>
+                  <variable name="new-src" as="xs:string">
+                     <choose>
+                        <when test="$relative-to-icons-uri eq 'pubclass.gif'">pubclass.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubdelegate.gif'">pubdelegate.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubenumeration.gif'">pubenumeration.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubevent.gif'">pubevent.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubextension.gif'">pubextension.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubfield.gif'">pubfield.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubinterface.gif'">pubinterface.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubmethod.gif'">pubmethod.svg</when>
+                        <when test="$relative-to-icons-uri eq 'puboperator.gif'">puboperator.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubproperty.gif'">pubproperty.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubstructure.gif'">pubstructure.svg</when>
+                        <otherwise>
+                           <sequence select="$relative-to-icons-uri"/>
+                        </otherwise>
+                     </choose>
+                  </variable>
+                  <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($new-src, $icons-output-dir))"/>
                </if>
             </element>
          </for-each-group>
