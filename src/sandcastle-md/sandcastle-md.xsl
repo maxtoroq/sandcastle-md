@@ -326,12 +326,11 @@
             <variable name="width" select="$col-widths[$i]/@width" as="xs:integer"/>
             <variable name="text" select="$r/*[$i]/string()"/>
             
-            <if test="$i gt 1">
-               <text>| </text>
-            </if>
+            <text>| </text>
             <value-of select="$text"/>
             <value-of select="string-join(for $c in (1 to ($width - string-length($text))) return ' ', '')"/>
             <text> </text>
+            <if test="position() eq count($headers)">|</if>
          </for-each>
 
          <if test="$r-pos eq 1">
@@ -341,11 +340,10 @@
                <variable name="i" select="."/>
                <variable name="width" select="$col-widths[$i]/@width" as="xs:integer"/>
 
-               <if test="$i gt 1">
-                  <text>| </text>
-               </if>
+               <text>| </text>
                <value-of select="string-join(for $c in (1 to $width) return '-', '')"/>
                <text> </text>
+               <if test="position() eq count($headers)">|</if>
             </for-each>
          </if>
          
