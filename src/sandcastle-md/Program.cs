@@ -6,7 +6,7 @@ using System.Text;
 using Saxon.Api;
 
 namespace sandcastle_md {
-   
+
    class Program {
 
       static void Main(string[] args) {
@@ -17,35 +17,39 @@ namespace sandcastle_md {
          var compiler = proc.NewXsltCompiler();
 
          string currentDir = Environment.CurrentDirectory;
-         string inputDir = args[0];
-         string outputDir = args[1];
 
          if (currentDir.Last() != Path.DirectorySeparatorChar) {
             currentDir += Path.DirectorySeparatorChar;
          }
 
+         string inputDir = args[0];
+
          if (inputDir.Last() != Path.DirectorySeparatorChar) {
             inputDir += Path.DirectorySeparatorChar;
-         }
-
-         if (outputDir.Last() != Path.DirectorySeparatorChar) {
-            outputDir += Path.DirectorySeparatorChar;
          }
 
          var baseUri = new Uri(AppDomain.CurrentDomain.BaseDirectory, UriKind.Absolute);
          var callerBaseUri = new Uri(currentDir, UriKind.Absolute);
          var sourceUri = new Uri(callerBaseUri, inputDir);
-         var outputUri = new Uri(callerBaseUri, outputDir);
+
+         string outputDir = (args.Length > 1) ? args[1] : null;
+
+         if (outputDir != null
+            && outputDir.Last() != Path.DirectorySeparatorChar) {
+
+            outputDir += Path.DirectorySeparatorChar;
+         }
+
+         var outputUri = (outputDir != null) ?
+            new Uri(callerBaseUri, outputDir)
+            : new Uri(sourceUri, "markdown/");
 
          var exec = compiler.Compile(new Uri(baseUri, "sandcastle-md-all.xsl"));
 
          var transformer = exec.Load();
          transformer.InitialTemplate = new QName("main");
          transformer.SetParameter(new QName("source-dir"), new XdmAtomicValue(sourceUri));
-
-         if (args.Length > 1) {
-            transformer.SetParameter(new QName("output-dir"), new XdmAtomicValue(outputUri));
-         }
+         transformer.SetParameter(new QName("output-dir"), new XdmAtomicValue(outputUri));
 
          var serializer = new Serializer();
          serializer.SetOutputWriter(Console.Out);
@@ -60,7 +64,7 @@ namespace sandcastle_md {
 
          if (!Directory.Exists(iconsDestUri.LocalPath)) {
             iconsDestDir = Directory.CreateDirectory(iconsDestUri.LocalPath);
-         } else{
+         } else {
             iconsDestDir = new DirectoryInfo(iconsDestUri.LocalPath);
          }
 

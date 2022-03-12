@@ -20,8 +20,8 @@
    xmlns:local="http://maxtoroq.github.io/sandcastle-md"
    exclude-result-prefixes="#all">
 
-   <param name="source-dir" select="resolve-uri('.', static-base-uri())"/>
-   <param name="output-dir" select="resolve-uri('markdown/', $source-dir)"/>
+   <param name="source-dir" required="yes"/>
+   <param name="output-dir" required="yes"/>
    <param name="icons-source-dir" select="resolve-uri('icons/', $source-dir)"/>
    <param name="icons-output-dir" select="resolve-uri('icons/', $output-dir)"/>
    
