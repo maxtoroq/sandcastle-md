@@ -174,6 +174,8 @@
                <if test="$is-icon">
                   <variable name="new-src" as="xs:string">
                      <choose>
+                        <when test="$relative-to-icons-uri eq 'protmethod.gif'">protmethod.svg</when>
+                        <when test="$relative-to-icons-uri eq 'protproperty.gif'">protproperty.svg</when>
                         <when test="$relative-to-icons-uri eq 'pubclass.gif'">pubclass.svg</when>
                         <when test="$relative-to-icons-uri eq 'pubdelegate.gif'">pubdelegate.svg</when>
                         <when test="$relative-to-icons-uri eq 'pubenumeration.gif'">pubenumeration.svg</when>

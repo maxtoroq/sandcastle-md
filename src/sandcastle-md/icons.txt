@@ -17,9 +17,7 @@ protevent.gif
 protextension.gif
 protfield.gif
 protinterface.gif
-protmethod.gif
 protoperator.gif
-protproperty.gif
 protstructure.gif
 static.gif
 xna.gif
