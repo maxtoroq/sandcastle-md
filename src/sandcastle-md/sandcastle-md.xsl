@@ -24,14 +24,13 @@
    <param name="output-dir" required="yes"/>
    <param name="icons-source-dir" select="resolve-uri('icons/', $source-dir)"/>
    <param name="icons-output-dir" select="resolve-uri('icons/', $output-dir)"/>
-   
+
    <param name="new-line" select="'&#13;&#10;'"/>
    <param name="default-code-lang" select="'csharp'"/>
    <param name="remove-assembly-name" select="true()"/>
    <param name="remove-assembly-file-name" select="false()"/>
    <param name="remove-assembly-version" select="true()"/>
-   <param name="rewrite-msdn-domain" select="true()"/>
-   
+
    <variable name="local:line-break" select="concat('  ', $new-line)"/>
 
    <output method="text"/>
@@ -42,9 +41,9 @@
    <template match="/">
       <param name="local:topic" tunnel="yes"/>
       <param name="local:output-uri" select="resolve-uri($local:topic/@local:md-url, $output-dir)" as="xs:anyURI" tunnel="yes"/>
-      
-      <variable name="code-lang" select="((.//*[local:has-class(., 'OH_CodeSnippetContainerTabActive')])[1]/normalize-space(), $default-code-lang)[1]"/>
-      
+
+      <variable name="code-lang" select="((.//*[local:has-class(., 'codeSnippetContainerTabSingle')])[1]/normalize-space(), $default-code-lang)[1]"/>
+
       <variable name="sanitized">
          <apply-templates mode="local:identity-sanitize">
             <with-param name="local:code-lang" select="$code-lang" tunnel="yes"/>
@@ -115,13 +114,13 @@
       </for-each>
    </template>
 
-   <template match="/|node()" mode="local:get-links">
+   <template match="/" mode="local:get-links">
       <param name="local:topic" tunnel="yes"/>
       <param name="local:input-uri" tunnel="yes"/>
       <param name="local:output-uri" tunnel="yes"/>
-      
+
       <variable name="links" as="element()*">
-         <for-each-group select=".//a[local:valid-link(.)]" group-by="@href">
+         <for-each-group select=".//div[@id='TopicContent']//a[local:valid-link(.)]" group-by="@href">
             <variable name="href" select="current-grouping-key()"/>
             <variable name="ref-topic" select="root($local:topic)//topic[@local:html-url=$href]"/>
 
@@ -137,56 +136,51 @@
                <otherwise>
                   <element name="l" namespace="">
                      <attribute name="href" select="$href"/>
-                     <choose>
-                        <when test="$rewrite-msdn-domain and matches($href, '^http://msdn2\.microsoft\.com/')">
-                           <attribute name="new-href" select="replace($href, '^http://msdn2', 'http://msdn')"/>
-                        </when>
-                        <when test="$href eq '#fullInheritance'">
-                           <attribute name="new-href" select="'#inheritance-hierarchy-continued'"/>
-                        </when>
-                     </choose>
+                     <if test="$href eq '#fullInheritance'">
+                        <attribute name="new-href" select="'#inheritance-hierarchy-continued'"/>
+                     </if>
                      <attribute name="title" select="@title"/>
                   </element>
                </otherwise>
             </choose>
          </for-each-group>
       </variable>
-      
+
       <variable name="images" as="element()*">
          <variable name="base-uri" select="document-uri(root())"/>
-         <for-each-group select=".//img" group-by="@src">
+         <for-each-group select=".//img[not(local:has-class(., 'collapseToggle'))]" group-by="@src">
             <variable name="src" select="current-grouping-key()"/>
             <variable name="same-alt" select="count(distinct-values(current-group()/@alt)) eq 1"/>
             <variable name="alt" select="@alt"/>
             <variable name="relative-to-icons-uri" select="local:make-relative-uri($icons-source-dir, resolve-uri($src, $local:input-uri))"/>
             <variable name="is-icon" select="not(contains($relative-to-icons-uri, '/'))"/>
-            
+
             <element name="l" namespace="">
                <attribute name="href" select="$src"/>
                <attribute name="title" select="@title"/>
                <if test="$same-alt 
                   and normalize-space($alt)
                   and not($alt castable as xs:integer)">
-                  
+
                   <attribute name="index" select="$alt"/>
                   <attribute name="alt" select="$alt"/>
                </if>
                <if test="$is-icon">
                   <variable name="new-src" as="xs:string">
                      <choose>
-                        <when test="$relative-to-icons-uri eq 'protmethod.gif'">protmethod.svg</when>
-                        <when test="$relative-to-icons-uri eq 'protproperty.gif'">protproperty.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubclass.gif'">pubclass.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubdelegate.gif'">pubdelegate.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubenumeration.gif'">pubenumeration.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubevent.gif'">pubevent.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubextension.gif'">pubextension.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubfield.gif'">pubfield.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubinterface.gif'">pubinterface.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubmethod.gif'">pubmethod.svg</when>
-                        <when test="$relative-to-icons-uri eq 'puboperator.gif'">puboperator.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubproperty.gif'">pubproperty.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubstructure.gif'">pubstructure.svg</when>
+                        <when test="$relative-to-icons-uri eq 'protMethod.gif'">protmethod.svg</when>
+                        <when test="$relative-to-icons-uri eq 'protProperty.gif'">protproperty.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubClass.gif'">pubclass.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubDelegate.gif'">pubdelegate.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubEnumeration.gif'">pubenumeration.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubEvent.gif'">pubevent.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubExtension.gif'">pubextension.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubField.gif'">pubfield.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubInterface.gif'">pubinterface.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubMethod.gif'">pubmethod.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubOperator.gif'">puboperator.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubProperty.gif'">pubproperty.svg</when>
+                        <when test="$relative-to-icons-uri eq 'pubStructure.gif'">pubstructure.svg</when>
                         <otherwise>
                            <sequence select="$relative-to-icons-uri"/>
                         </otherwise>
@@ -197,37 +191,33 @@
             </element>
          </for-each-group>
       </variable>
-      
+
       <for-each select="$links, $images[not(@index)]">
          <copy>
             <copy-of select="@*"/>
             <attribute name="index" select="position()"/>
          </copy>
       </for-each>
-      
+
       <sequence select="$images[@index]"/>
-         
    </template>
-      
-   <template match="span[@id and not(normalize-space()) and following-sibling::*[1][self::script and matches(string(), 'AddLanguageSpecificTextSet\(')]]" mode="local:identity-sanitize">
+
+   <template match="span[@id and not(normalize-space()) and @data-languageSpecificText]" mode="local:identity-sanitize">
       <param name="local:code-lang" tunnel="yes"/>
-      
-      <variable name="script" select="following-sibling::script[1]"/>
-      <variable name="string" select="substring-before(substring-after($script, '&quot;'), '&quot;')"/>
-      <variable name="params" select="tokenize(substring-after($string, '?'), '\|')"/>
+
+      <variable name="params" select="tokenize(@data-languageSpecificText, '\|')"/>
       <variable name="selected-param" select="$params[substring-before(., '=') = (local:code-lang-short($local:code-lang), 'nu')][1]"/>
       <value-of select="replace(substring-after($selected-param, '='), '&lt;', '&amp;lt;')"/>
    </template>
-      
-   <template match="td[local:has-class(., 'OH_tdTitleColumn')]" mode="local:page">
-      <call-template name="local:md-h1"/>
-   </template>
 
-   <template match="div[@id='mainBody']" mode="local:page">
-      <for-each select="(.//*[local:has-class(., 'OH_CollapsibleAreaRegion')])[1]">
-         <apply-templates select="preceding-sibling::node()" mode="local:text"/>
+   <template match="div[@id='TopicContent']" mode="local:page">
+      <for-each select=".//h1">
+         <call-template name="local:md-h1"/>
+      </for-each>
+      <for-each select="(.//*[local:has-class(., 'collapsibleAreaRegion')])[1]">
+         <apply-templates select="preceding-sibling::node()[not(.//h1)]" mode="local:text"/>
 
-         <for-each-group select="., following-sibling::node()" group-starting-with="*[local:has-class(., 'OH_CollapsibleAreaRegion')]">
+         <for-each-group select="., following-sibling::node()" group-starting-with="*[local:has-class(., 'collapsibleAreaRegion')]">
             <value-of select="$new-line"/>
             <apply-templates select="." mode="local:region-title"/>
             <apply-templates select="current-group()[position() gt 1]" mode="local:text"/>
@@ -235,18 +225,18 @@
       </for-each>
    </template>
 
-   <template match="div[@id='mainBody']/text()[position() eq 1 and not(normalize-space())]" mode="local:text"/>
+   <template match="div[@id='TopicContent']/text()[position() eq 1 and not(normalize-space())]" mode="local:text"/>
 
-   <template match="div[@id='mainBody']/div[local:has-class(., 'summary')]" mode="local:text">
+   <template match="div[@id='TopicContent']/div[local:has-class(., 'summary')]" mode="local:text">
       <next-match/>
       <value-of select="$new-line"/>
    </template>
 
-   <template match="div[local:has-class(., 'OH_regiontitle')]" mode="local:region-title">
+   <template match="span[local:has-class(., 'collapsibleRegionTitle')]" mode="local:region-title">
       <call-template name="local:md-h2"/>
    </template>
 
-   <template match="div[local:has-class(., 'OH_regiontitle') and normalize-space() eq 'Inheritance Hierarchy' and parent::*[@id='fullInheritance']]" mode="local:region-title">
+   <template match="span[local:has-class(., 'collapsibleRegionTitle') and normalize-space() eq 'Inheritance Hierarchy' and parent::*[@id='fullInheritance']]" mode="local:region-title">
       <call-template name="local:md-h2">
          <with-param name="content" select="'Inheritance Hierarchy (Continued)'"/>
       </call-template>
@@ -268,26 +258,26 @@
       <value-of select="$new-line"/>
    </template>
 
-   <template match="div[local:has-class(., 'OH_CodeSnippetContainer')]" mode="local:text">
+   <template match="div[local:has-class(., 'codeSnippetContainer')]" mode="local:text">
       <param name="local:code-lang" tunnel="yes"/>
-      
+
       <value-of select="$new-line"/>
       <text>```</text>
       <value-of select="local:code-lang-github($local:code-lang)"/>
       <value-of select="$new-line"/>
-      <value-of select="(.//*[local:has-class(., 'OH_CodeSnippetContainerCode')])[1]/string()"/>
+      <value-of select="(.//*[local:has-class(., 'codeSnippetContainerCode')])[1]/string()"/>
       <value-of select="$new-line"/>
       <text>```</text>
       <value-of select="$new-line"/>
    </template>
-   
+
    <template match="table" mode="local:text">
       <param name="local:skip-cols" select="
-         if ((.//th)[1][local:has-class(., 'ps_iconColumn')]) then 
+         if ((.//th)[1][local:has-class(., 'iconColumn')]) then 
          (if (every $cell in ..//tr/td[1] satisfies $cell[not(.//* or normalize-space())]) then 1 else 0)
          else 0
       " tunnel="yes"/>
-      
+
       <value-of select="$new-line"/>
 
       <variable name="normalized-table" as="element()">
@@ -295,7 +285,7 @@
             <with-param name="skip-cols" select="$local:skip-cols"/>
          </call-template>
       </variable>
-      
+
       <variable name="head-row" select="$normalized-table/thead/tr[1]"/>
       <variable name="headers" select="$head-row/*"/>
       <variable name="rows" select="$normalized-table/tbody/tr[not(. is $head-row)]"/>
@@ -322,12 +312,12 @@
          <if test="$r-pos gt 1">
             <value-of select="$new-line"/>
          </if>
-         
+
          <for-each select="1 to count($headers)">
             <variable name="i" select="."/>
             <variable name="width" select="$col-widths[$i]/@width" as="xs:integer"/>
             <variable name="text" select="$r/*[$i]/string()"/>
-            
+
             <text>| </text>
             <value-of select="$text"/>
             <value-of select="string-join(for $c in (1 to ($width - string-length($text))) return ' ', '')"/>
@@ -348,9 +338,8 @@
                <if test="position() eq count($headers)">|</if>
             </for-each>
          </if>
-         
       </for-each>
-      
+
       <value-of select="$new-line"/>
    </template>
 
@@ -359,7 +348,7 @@
       <next-match/>
       <text> </text>
    </template>
-      
+
    <template match="dl" mode="local:text">
       <for-each-group select="*" group-starting-with="dt">
          <for-each select="current-group()[1]">
@@ -369,13 +358,13 @@
          <value-of select="$new-line"/>
       </for-each-group>
    </template>
-   
-   <template match="div[local:has-class(., 'seeAlsoStyle')]" mode="local:text">
-      
+
+   <template match="div[@id='seeAlsoSection']/div" mode="local:text">
+
       <variable name="result" as="item()*">
          <apply-templates mode="#current"/>
       </variable>
-      
+
       <sequence select="$result"/>
 
       <if test="$result">
@@ -385,7 +374,7 @@
 
    <template match="a[local:valid-link(.)]" mode="local:text">
       <param name="local:links" tunnel="yes"/>
-      
+
       <variable name="index" select="$local:links[@href=current()/@href]/@index"/>
 
       <if test="$index">
@@ -401,7 +390,7 @@
 
    <template match="img[@alt/normalize-space()]" mode="local:text">
       <param name="local:links" tunnel="yes"/>
-      
+
       <variable name="links" select="$local:links[@href = current()/@src]"/>
       <variable name="index" select="($links[@alt = current()/@alt], $links[not(@alt)])[1]/@index"/>
 
@@ -411,10 +400,10 @@
          <text>]</text>
       </if>
    </template>
-      
+
    <template match="img[not(@alt/normalize-space())]" mode="local:text">
       <param name="local:links" tunnel="yes"/>
-      
+
       <variable name="index" select="$local:links[@href = current()/@src and not(@alt)]/@index"/>
 
       <if test="$index">
@@ -423,7 +412,7 @@
          <text>]</text>
       </if>
    </template>
-   
+
    <template match="span[local:has-class(., 'selflink')]" mode="local:text">
       <value-of select="'**', normalize-space(), '**'" separator=""/>
    </template>
@@ -444,6 +433,12 @@
       <value-of select="$local:line-break"/>
    </template>
 
+   <template match="tr//br" mode="local:text">
+      <text>&lt;</text>
+      <value-of select="local-name()"/>
+      <text>/></text>
+   </template>
+
    <template match="h4" mode="local:text">
       <call-template name="local:md-h4">
          <with-param name="content">
@@ -451,7 +446,7 @@
          </with-param>
       </call-template>
    </template>
-   
+
    <template match="b[normalize-space()]|strong[normalize-space()]" mode="local:text">
       <text>**</text>
       <apply-templates mode="#current"/>
@@ -471,7 +466,7 @@
       </if>
 
    </template>
-   
+
    <!-- Helpers -->
 
    <template name="local:md-h1">
@@ -480,7 +475,7 @@
       </param>
 
       <variable name="title" select="string($content)"/>
-      
+
       <value-of select="$title"/>
       <value-of select="$new-line"/>
       <value-of select="string-join(for $c in (1 to string-length($title)) return '=', '')"/>
@@ -493,7 +488,7 @@
       </param>
 
       <variable name="title" select="string($content)"/>
-      
+
       <value-of select="$new-line"/>
       <value-of select="$title"/>
       <value-of select="$new-line"/>
@@ -505,7 +500,7 @@
       <param name="content">
          <apply-templates select="." mode="local:text"/>
       </param>
-      
+
       <value-of select="$new-line"/>
       <text>### </text>
       <value-of select="$content"/>
@@ -516,7 +511,7 @@
       <param name="content">
          <apply-templates select="." mode="local:text"/>
       </param>
-      
+
       <value-of select="$new-line"/>
       <text>#### </text>
       <value-of select="$content"/>
@@ -533,10 +528,10 @@
       <value-of select="$content"/>
       <value-of select="$new-line"/>
    </template>
-   
+
    <template name="local:table-data-to-md">
       <param name="skip-cols" select="0"/>
-      
+
       <element name="table" namespace="">
          <variable name="head-row" select="(thead, tbody, .)[1]/tr[1]"/>
          <variable name="rows" select="(tbody, .)[1]/tr[not(. is $head-row)]"/>
@@ -570,7 +565,7 @@
 
       <sequence select="boolean($el/self::a[@href and (@href = '#fullInheritance' or (every $s in ('#', 'mailto:') satisfies not(starts-with(@href, $s))))])"/>
    </function>
-      
+
    <function name="local:has-class" as="xs:boolean">
       <param name="el" as="element()" />
       <param name="class-name" as="item()" />
@@ -584,12 +579,12 @@
 
       <sequence select="$el/@rel and tokenize(upper-case(normalize-space($el/@rel)), ' ') = upper-case(string($rel))" />
    </function>
-   
+
    <function name="local:code-lang-github" as="xs:string">
       <param name="lang" as="item()"/>
 
       <variable name="lang-lower" select="lower-case($lang)"/>
-         
+
       <choose>
          <when test="$lang-lower = ('c#', 'cs')">
             <sequence select="'csharp'"/>
@@ -605,12 +600,12 @@
          </otherwise>
       </choose>
    </function>
-   
+
    <function name="local:code-lang-short" as="xs:string">
       <param name="lang" as="item()"/>
 
       <variable name="lang-lower" select="lower-case($lang)"/>
-         
+
       <choose>
          <when test="$lang-lower = ('c#', 'csharp')">
             <sequence select="'cs'"/>
@@ -632,5 +627,5 @@
 
       <sequence select="name($el) = ('address', 'article', 'aside', 'audio', 'blockquote', 'canvas', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'noscript', 'ol', 'output', 'p', 'pre', 'section', 'table', 'ul', 'video')"/>
    </function>
-   
+
 </stylesheet>

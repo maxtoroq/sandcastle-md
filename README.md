@@ -19,7 +19,7 @@ Open your SHFB project and make sure the following settings are in place:
   - Uncheck *Indent rendered HTML*<br/> `<IndentHtml>False</IndentHtml>`
 * Help File
   - Set *Topic file naming method* to **Member name**<br/> `<NamingMethod>MemberName</NamingMethod>`
-  - Set *Presentation Style* to **VS2010**<br/> `<PresentationStyle>VS2010</PresentationStyle>`
+  - Set *Presentation Style* to **VS2013**<br/> `<PresentationStyle>VS2013</PresentationStyle>`
   - Check *Include root namespace container* and set the title to something like **&lt;project name> Namespaces**<br/>  `<RootNamespaceContainer>True</RootNamespaceContainer>`<br/>`<RootNamespaceTitle>{Project Name} Namespaces</RootNamespaceTitle>`
 * Help 1/Website
   - Set *Website SDK link type* to **Online links to MSDN help topics**
