@@ -93,6 +93,49 @@
       </analyze-string>
    </template>
 
+   <template match="span[@id and not(normalize-space()) and @data-languageSpecificText]" mode="local:identity-sanitize">
+      <param name="local:code-lang" tunnel="yes"/>
+
+      <variable name="params" select="tokenize(@data-languageSpecificText, '\|')"/>
+      <variable name="selected-param" select="$params[substring-before(., '=') = (local:code-lang-short($local:code-lang), 'nu')][1]"/>
+      <value-of select="replace(substring-after($selected-param, '='), '&lt;', '&amp;lt;')"/>
+   </template>
+
+   <template match="div[local:has-class(., 'collapsibleAreaRegion') and not(preceding-sibling::div[local:has-class(., 'collapsibleAreaRegion')])]" mode="local:identity-sanitize">
+      <param name="local:topic" tunnel="yes"/>
+      <param name="local:overload-recurse" tunnel="yes"/>
+
+      <variable name="parent-topic" select="$local:topic/.."/>
+
+      <if test="not($local:overload-recurse)
+            and $parent-topic[starts-with(@id, 'Overload:')]">
+         <variable name="overload-uri" select="resolve-uri($parent-topic/@local:html-url, resolve-uri('html/', $source-dir))"/>
+         <variable name="overload-doc" select="doc($overload-uri)"/>
+         <variable name="overload-section" select="($overload-doc//div[@id='TopicContent']/*[local:has-class(., 'collapsibleSection')])[1]"/>
+         <variable name="overload-region" select="$overload-section/preceding-sibling::div[local:has-class(., 'collapsibleAreaRegion')]"/>
+         <apply-templates select="$overload-region, $overload-section" mode="#current">
+            <with-param name="local:overload-recurse" select="true()" tunnel="yes"/>
+         </apply-templates>
+      </if>
+      <next-match/>
+   </template>
+
+   <template match="a[@href]" mode="local:identity-sanitize">
+      <param name="local:topic" tunnel="yes"/>
+      <param name="local:overload-recurse" tunnel="yes"/>
+
+      <choose>
+         <when test="$local:overload-recurse and @href = $local:topic/@local:html-url">
+            <apply-templates mode="#current"/>
+         </when>
+         <otherwise>
+            <next-match/>
+         </otherwise>
+      </choose>
+   </template>
+
+   <!-- Serialization -->
+
    <template match="/" mode="local:sanitized">
 
       <variable name="links" as="element()*">
@@ -202,14 +245,6 @@
       <sequence select="$images[@index]"/>
    </template>
 
-   <template match="span[@id and not(normalize-space()) and @data-languageSpecificText]" mode="local:identity-sanitize">
-      <param name="local:code-lang" tunnel="yes"/>
-
-      <variable name="params" select="tokenize(@data-languageSpecificText, '\|')"/>
-      <variable name="selected-param" select="$params[substring-before(., '=') = (local:code-lang-short($local:code-lang), 'nu')][1]"/>
-      <value-of select="replace(substring-after($selected-param, '='), '&lt;', '&amp;lt;')"/>
-   </template>
-
    <template match="div[@id='TopicContent']" mode="local:page">
       <for-each select=".//h1">
          <call-template name="local:md-h1"/>
@@ -233,13 +268,21 @@
    </template>
 
    <template match="span[local:has-class(., 'collapsibleRegionTitle')]" mode="local:region-title">
-      <call-template name="local:md-h2"/>
-   </template>
-
-   <template match="span[local:has-class(., 'collapsibleRegionTitle') and normalize-space() eq 'Inheritance Hierarchy' and parent::*[@id='fullInheritance']]" mode="local:region-title">
-      <call-template name="local:md-h2">
-         <with-param name="content" select="'Inheritance Hierarchy (Continued)'"/>
-      </call-template>
+      <choose>
+         <when test="normalize-space() eq 'Overload List'">
+            <call-template name="local:md-h2">
+               <with-param name="content" select="'Overloads'"/>
+            </call-template>
+         </when>
+         <when test="normalize-space() eq 'Inheritance Hierarchy' and parent::*[@id='fullInheritance']">
+            <call-template name="local:md-h2">
+               <with-param name="content" select="'Inheritance Hierarchy (Continued)'"/>
+            </call-template>
+         </when>
+         <otherwise>
+            <call-template name="local:md-h2"/>
+         </otherwise>
+      </choose>
    </template>
 
    <template match="p[normalize-space()]" mode="local:text">

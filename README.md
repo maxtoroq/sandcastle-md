@@ -9,6 +9,7 @@ Additionaly, sandcastle-md makes the following changes to SHFB's output:
 
 - Transforms the flat topic file structure to a hierarchical, one directory per namespace/type
 - Excludes topics that group members into categories e.g. Properties, Methods, Overloads, etc.
+- Includes the Overload List in each overloaded member's topic
 
 Project Settings
 ----------------
