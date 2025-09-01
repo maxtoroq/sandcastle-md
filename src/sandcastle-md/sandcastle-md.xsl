@@ -126,7 +126,10 @@
 
       <choose>
          <when test="$local:overload-recurse and @href = $local:topic/@local:html-url">
-            <apply-templates mode="#current"/>
+            <element name="span" namespace="">
+               <attribute name="class" select="'selflink'"/>
+               <apply-templates mode="#current"/>
+            </element>
          </when>
          <otherwise>
             <next-match/>
