@@ -21,7 +21,7 @@
    exclude-result-prefixes="#all">
 
    <import href="sandcastle-md.xsl"/>
-   
+
    <output method="text"/>
 
    <template name="main">
@@ -46,7 +46,7 @@
    <template match="topic" mode="read-toc">
       <param name="ns-segments-length" select="0" as="xs:integer" tunnel="yes"/>
       <param name="type-segments-length" select="0" as="xs:integer" tunnel="yes"/>
-      
+
       <variable name="url" select="local:parse-id(@id, @file)"/>
       <variable name="file" select="tokenize(replace(replace(@file, '__', '_.'), '_([0-9]+)$', '.$1'), '_')"/>
 
@@ -63,7 +63,6 @@
                   <with-param name="ns-segments-length" select="$ns-segments-length" tunnel="yes"/>
                </apply-templates>
             </copy>
-            
          </when>
          <when test="string-length($url[1]) eq 1">
 
@@ -72,7 +71,7 @@
 
             <variable name="ns-parts" select="$url[position() gt 1][$is-ns or position() le $ns-segments-length]"/>
             <variable name="type-parts" select="$url[position() gt 1][position() gt count($ns-parts)][$is-type or position() le $type-segments-length]"/>
-            
+
             <variable name="ns-dir" select="string-join($ns-parts, '.')"/>
             <variable name="type-dir" select="
                if (not(empty($type-parts))) then 
@@ -87,25 +86,24 @@
                else
                   substring(@file, (3 + 2) + string-length($ns-dir) + string-length($type-dir))
             " />
-            
+
             <variable name="output-url" select="string-join(($ns-dir, $type-dir, $file-name), '/')" />
 
             <copy>
                <apply-templates select="@*" mode="#current"/>
                <attribute name="local:md-url" select="concat($output-url, '.md')" />
                <attribute name="local:html-url" select="concat(@file, '.htm')" />
-               
+
                <apply-templates mode="#current">
-                  <with-param name="ns-segments-length" 
-                     select="if ($is-ns) then count($ns-parts) else $ns-segments-length" 
+                  <with-param name="ns-segments-length"
+                     select="if ($is-ns) then count($ns-parts) else $ns-segments-length"
                      tunnel="yes"/>
 
-                  <with-param name="type-segments-length" 
+                  <with-param name="type-segments-length"
                      select="if ($is-type) then count($type-parts) else $type-segments-length"
                      tunnel="yes"/>
                </apply-templates>
             </copy>
-            
          </when>
          <otherwise>
             <copy>
@@ -117,7 +115,7 @@
                   <with-param name="ns-segments-length" select="$ns-segments-length" tunnel="yes"/>
                </apply-templates>
             </copy>
-         </otherwise>      
+         </otherwise>
       </choose>
    </template>
 
@@ -130,7 +128,7 @@
       <variable name="input-uri" select="resolve-uri(@local:html-url, resolve-uri('html/', $source-dir))"/>
       <variable name="source" select="doc($input-uri)"/>
       <variable name="output-uri" select="resolve-uri(@local:md-url, $output-dir)"/>
-      
+
       <result-document href="{$output-uri}">
          <apply-templates select="$source">
             <with-param name="local:topic" select="." tunnel="yes"/>
@@ -165,9 +163,9 @@
    <template match="topic[@local:unused-topic]" mode="write-toc">
       <apply-templates mode="#current"/>
    </template>
-   
+
    <template match="topic/@file | topic/@project" mode="write-toc"/>
-   
+
    <template match="topic/@local:html-url" mode="write-toc"/>
 
    <template match="topic/@local:md-url" mode="write-toc">
