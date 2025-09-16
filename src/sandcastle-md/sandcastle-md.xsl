@@ -172,10 +172,18 @@
 
             <choose>
                <when test="$ref-topic">
-                  <if test="not($ref-topic/@local:unused-topic)">
+                  <variable name="ref-overload" select="starts-with($ref-topic/@id, 'Overload:')"/>
+                  <if test="not($ref-topic/@local:unused-topic)
+                        or ($ref-overload and not(every $n in current-group() satisfies $n/ancestor::div[@id='seeAlsoSection']))">
                      <element name="l" namespace="">
                         <attribute name="href" select="$href"/>
-                        <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($ref-topic/@local:md-url, $output-dir))"/>
+                        <attribute name="new-href" select="
+                           local:make-relative-uri(
+                              $local:output-uri,
+                              resolve-uri(($ref-topic[$ref-overload]/topic[1], $ref-topic)[1]/@local:md-url, $output-dir))"/>
+                        <if test="$ref-overload">
+                           <attribute name="ref-overload" select="'1'"/>
+                        </if>
                      </element>
                   </if>
                </when>
@@ -421,13 +429,13 @@
    <template match="a[local:valid-link(.)]" mode="local:text">
       <param name="local:links" tunnel="yes"/>
 
-      <variable name="index" select="$local:links[@href=current()/@href]/@index"/>
+      <variable name="l" select="$local:links[@href=current()/@href]"/>
 
-      <if test="$index">
+      <if test="$l and not($l/@ref-overload and ancestor::div[@id='seeAlsoSection'])">
          <text>[</text>
          <next-match/>
          <text>][</text>
-         <value-of select="$index"/>
+         <value-of select="$l/@index"/>
          <text>]</text>
       </if>
    </template>
