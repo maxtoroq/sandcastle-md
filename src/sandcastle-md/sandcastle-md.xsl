@@ -27,9 +27,10 @@
 
    <param name="new-line" select="'&#13;&#10;'"/>
    <param name="default-code-lang" select="'csharp'"/>
-   <param name="remove-assembly-name" select="true()"/>
+   <param name="remove-assembly-name" select="false()"/>
    <param name="remove-assembly-file-name" select="false()"/>
-   <param name="remove-assembly-version" select="true()"/>
+   <param name="remove-assembly-version" select="false()"/>
+   <param name="exclude-icons" select="false()"/>
 
    <variable name="local:line-break" select="concat('  ', $new-line)"/>
 
@@ -209,40 +210,42 @@
             <variable name="relative-to-icons-uri" select="local:make-relative-uri($icons-source-dir, resolve-uri($src, $local:input-uri))"/>
             <variable name="is-icon" select="not(contains($relative-to-icons-uri, '/'))"/>
 
-            <element name="l" namespace="">
-               <attribute name="href" select="$src"/>
-               <attribute name="title" select="@title"/>
-               <if test="$same-alt 
-                  and normalize-space($alt)
-                  and not($alt castable as xs:integer)">
+            <if test="not($is-icon and $exclude-icons)">
+               <element name="l" namespace="">
+                  <attribute name="href" select="$src"/>
+                  <attribute name="title" select="@title"/>
+                  <if test="$same-alt 
+                     and normalize-space($alt)
+                     and not($alt castable as xs:integer)">
 
-                  <attribute name="index" select="$alt"/>
-                  <attribute name="alt" select="$alt"/>
-               </if>
-               <if test="$is-icon">
-                  <variable name="new-src" as="xs:string">
-                     <choose>
-                        <when test="$relative-to-icons-uri eq 'protMethod.gif'">protmethod.svg</when>
-                        <when test="$relative-to-icons-uri eq 'protProperty.gif'">protproperty.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubClass.gif'">pubclass.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubDelegate.gif'">pubdelegate.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubEnumeration.gif'">pubenumeration.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubEvent.gif'">pubevent.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubExtension.gif'">pubextension.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubField.gif'">pubfield.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubInterface.gif'">pubinterface.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubMethod.gif'">pubmethod.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubOperator.gif'">puboperator.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubProperty.gif'">pubproperty.svg</when>
-                        <when test="$relative-to-icons-uri eq 'pubStructure.gif'">pubstructure.svg</when>
-                        <otherwise>
-                           <sequence select="$relative-to-icons-uri"/>
-                        </otherwise>
-                     </choose>
-                  </variable>
-                  <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($new-src, $icons-output-dir))"/>
-               </if>
-            </element>
+                     <attribute name="index" select="$alt"/>
+                     <attribute name="alt" select="$alt"/>
+                  </if>
+                  <if test="$is-icon">
+                     <variable name="new-src" as="xs:string">
+                        <choose>
+                           <when test="$relative-to-icons-uri eq 'protMethod.gif'">protmethod.svg</when>
+                           <when test="$relative-to-icons-uri eq 'protProperty.gif'">protproperty.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubClass.gif'">pubclass.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubDelegate.gif'">pubdelegate.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubEnumeration.gif'">pubenumeration.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubEvent.gif'">pubevent.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubExtension.gif'">pubextension.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubField.gif'">pubfield.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubInterface.gif'">pubinterface.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubMethod.gif'">pubmethod.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubOperator.gif'">puboperator.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubProperty.gif'">pubproperty.svg</when>
+                           <when test="$relative-to-icons-uri eq 'pubStructure.gif'">pubstructure.svg</when>
+                           <otherwise>
+                              <sequence select="$relative-to-icons-uri"/>
+                           </otherwise>
+                        </choose>
+                     </variable>
+                     <attribute name="new-href" select="local:make-relative-uri($local:output-uri, resolve-uri($new-src, $icons-output-dir))"/>
+                  </if>
+               </element>
+            </if>
          </for-each-group>
       </variable>
 
@@ -327,8 +330,8 @@
 
    <template match="table" mode="local:text">
       <param name="local:skip-cols" select="
-         if ((.//th)[1][local:has-class(., 'iconColumn')]) then 
-         (if (every $cell in ..//tr/td[1] satisfies $cell[not(.//* or normalize-space())]) then 1 else 0)
+         if ((.//th)[1][local:has-class(., 'iconColumn')]) then
+            (if ($exclude-icons or (every $cell in ..//tr/td[1] satisfies $cell[not(.//* or normalize-space())])) then 1 else 0)
          else 0
       " tunnel="yes"/>
 
